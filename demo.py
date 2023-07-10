@@ -6,7 +6,7 @@ import openai
 import ast
 import json
 
-openai.api_key = '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'
+openai.api_key = '*************'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Demo")
