@@ -23,7 +23,7 @@ class ChatGPT:
             {"role": "user", "content": prompt},
         ]
         )
-        topics = chat_response['choices'][0]['message']['content'].split('\\n')
+        topics = chat_response['choices'][0]['message']['content'].split('\n')
         return topics
     
     
