@@ -26,6 +26,10 @@ class ChatGPT:
         ]
         )
         topics = chat_response['choices'][0]['message']['content'].split('\n')
+<<<<<<< HEAD
         return topics
     
     
+=======
+        return topics
+>>>>>>> a880eb2 (Delete: demo.py)
