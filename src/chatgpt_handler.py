@@ -1,4 +1,5 @@
 import openai
+import re
 
 class ChatGPT:
     def __init__(self, key, prompt_path = "./prompt.txt"):
@@ -10,8 +11,9 @@ class ChatGPT:
         prompt = open(self.prompt_path).read() + "\n"
 
         for task_dict in prompt_instructions:
-            input= ' '.join([task_dict["instruction"], task_dict["input"]])
-            prompt += f"'Input': {input}\n"
+            query = '\"'+task_dict['instruction']+'\"' #+ '\"'+ task_dict['input'] + '\"'
+            prompt += f"'Input': {query}\n"
+        prompt+="Topic:"
         return prompt
 
     def request_to_chatgpt(self, instructions):
