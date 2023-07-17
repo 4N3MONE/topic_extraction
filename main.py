@@ -7,6 +7,9 @@ import json
 ERROR_LIMIT = 5
 SLEEP_TIME = 0.5
 
+def func(a, b):
+    return len(a) + len(b)
+
 def load_data(path='./data/kullm.json'):
     with open(path, 'r') as f:
         data = json.load(f)
@@ -29,12 +32,14 @@ if __name__=="__main__":
         error_count = 0
         new_data.append({
             'instruction' : '',
-            'topic' : ''
+            'topic' : '',
+            'score' : 0.0
         })
         while(True):
             try:
                 new_data[-1]['instruction'] = data[idx]['instruction']
                 new_data[-1]['topic'] = chatgpt.request.to_chatgpt(data[idx])
+                new_data[-1]['score'] = map(func, *new_data[-1].values()[:2])
                 log.write(f'instruction[{idx}]: {data[idx]["instruction"]}\n')
                 log.write(f'output[{idx}]: {new_data[-1]["topic"]}\n\n')
                 break
