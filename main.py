@@ -1,14 +1,16 @@
 from privateManager import get_key
 from src.chatgpt_handler import ChatGPT
+#from src.metric import cal_score, get_embeddings
+#from src.metric_rouge import pos_filter, get_rouge
 import time
 from tqdm import tqdm
 import json
 
-ERROR_LIMIT = 5
+ERROR_LIMIT = 20
 SLEEP_TIME = 0.5
 
-def func(a, b):
-    return len(a) + len(b)
+#def func(a, b):
+#    return len(a) + len(b)
 
 def load_data(path='./data/kullm.json'):
     with open(path, 'r') as f:
@@ -17,7 +19,7 @@ def load_data(path='./data/kullm.json'):
 
 def save_data(obj, path='./data/result_01.json'):
     with open(path, 'w') as f:
-        json.dump(obj, f)
+        json.dump(obj, f, ensure_ascii=False)
 
 if __name__=="__main__":
     chatgpt = ChatGPT(get_key('openai'))
@@ -31,6 +33,7 @@ if __name__=="__main__":
     for idx in tqdm(range(start_index, end_index)):
         error_count = 0
         new_data.append({
+            'idx' : idx,
             'instruction' : '',
             'topic' : '',
             'score' : 0.0
@@ -38,8 +41,8 @@ if __name__=="__main__":
         while(True):
             try:
                 new_data[-1]['instruction'] = data[idx]['instruction']
-                new_data[-1]['topic'] = chatgpt.request.to_chatgpt(data[idx])
-                new_data[-1]['score'] = map(func, *new_data[-1].values()[:2])
+                new_data[-1]['topic'] = chatgpt.request_to_chatgpt(data[idx])
+                #new_data[-1]['score'] = map(func, *new_data[-1].values()[:2])
                 log.write(f'instruction[{idx}]: {data[idx]["instruction"]}\n')
                 log.write(f'output[{idx}]: {new_data[-1]["topic"]}\n\n')
                 break
