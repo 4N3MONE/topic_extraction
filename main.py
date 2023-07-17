@@ -41,16 +41,9 @@ if __name__=="__main__":
         while(True):
             try:
                 new_data[-1]['instruction'] = data[idx]['instruction']
-<<<<<<< HEAD
                 new_data[-1]['topic'] = chatgpt.request_to_chatgpt(data[idx])
-                #new_data[-1]['score'] = map(func, *new_data[-1].values()[:2])
-                log.write(f'instruction[{idx}]: {data[idx]["instruction"]}\n')
-                log.write(f'output[{idx}]: {new_data[-1]["topic"]}\n\n')
-=======
-                new_data[-1]['topic'] = chatgpt.request.to_chatgpt(data[idx])
                 new_data[-1]['score'] = map(func, [new_data[-1]['instruction'], new_data[-1]['topic']])
                 log.write(f'{data[idx]["instruction"]} -> {new_data[-1]["topic"]} ({new_data[-1]["score"]})\n')
->>>>>>> f638a7e (Feat: Simple Log)
                 break
             except Exception as error:
                 error_count += 1
