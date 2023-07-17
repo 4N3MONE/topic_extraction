@@ -19,6 +19,7 @@ def save_data(obj, path='./data/result_01.json'):
 if __name__=="__main__":
     chatgpt = ChatGPT(get_key('openai'))
     data = load_data()
+    new_data = []
     log = open('./log.txt', 'w')
     
     start_index = 0
@@ -26,11 +27,16 @@ if __name__=="__main__":
     
     for idx in tqdm(range(start_index, end_index)):
         error_count = 0
+        new_data.append({
+            'instruction' : '',
+            'topic' : ''
+        })
         while(True):
             try:
-                data[idx]['topic'] = chatgpt.request.to_chatgpt(data[idx])
+                new_data[-1]['instruction'] = data[idx]['instruction']
+                new_data[-1]['topic'] = chatgpt.request.to_chatgpt(data[idx])
                 log.write(f'instruction[{idx}]: {data[idx]["instruction"]}\n')
-                log.write(f'output[{idx}]: {data[idx]["topic"]}\n\n')
+                log.write(f'output[{idx}]: {new_data[-1]["topic"]}\n\n')
                 break
             except Exception as error:
                 error_count += 1
@@ -43,4 +49,4 @@ if __name__=="__main__":
     print(f'successfully finished: [{start_index}:{end_index}]')
     log.close()
     
-    save_data(data)
+    save_data(new_data)
