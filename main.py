@@ -1,67 +1,52 @@
 from privateManager import get_key
-import openai
 from src.chatgpt_handler import ChatGPT
 import time
-import pandas as pd
-import pickle
 from tqdm import tqdm
+import json
 
-chatgpt = ChatGPT(get_key('openai'))
+ERROR_LIMIT = 5
+SLEEP_TIME = 0.5
 
 def load_data(path='./data/kullm.json'):
-    import json
     with open(path, 'r') as f:
         data = json.load(f)
     return data
 
-def extract_topic(start_index, interval, log):
-    error_message = None
-    result = []
-    try:
-        instructions = data[start_index : start_index + interval]
-        texts = chatgpt.request_to_chatgpt(instructions)#[-interval:]
-        log.write(f'\ninstructions[{start_index} : {start_index + interval}]\n' + '\n'.join(map(lambda x : x['instruction'], instructions)) + '\n\n')
-        log.write('\n'.join(texts) + '\n')
-        for text in texts :
-            result.append(text.split(':')[-1].replace('"',''))
-        if len(result)!= interval: 
-            return None, f"The length of result is not matched to interval, the length of result is {len(result)} but interval is {interval}"
-    except Exception as e:
-        error_message = e
+def save_data(obj, path='./data/result_01.json'):
+    with open(path, 'w') as f:
+        json.dump(obj, f)
+
+if __name__=="__main__":
+    chatgpt = ChatGPT(get_key('openai'))
+    data = load_data()
+    new_data = []
+    log = open('./log.txt', 'w')
     
-    return result, error_message
-
-
-log = open('./log.txt', 'w')
-data = load_data()
-interval = 1
-error_limit = 5
-topics = []
-for start_index in tqdm(range(0,50, interval)):
-    error_count = 0
-    while(True):
-        try:
-            topic, error = extract_topic(start_index, interval, log)
-            if error == None:
-                topics.extend(topic)
-                is_comped = True
+    start_index = 0
+    end_index = len(data)
+    
+    for idx in tqdm(range(start_index, end_index)):
+        error_count = 0
+        new_data.append({
+            'instruction' : '',
+            'topic' : ''
+        })
+        while(True):
+            try:
+                new_data[-1]['instruction'] = data[idx]['instruction']
+                new_data[-1]['topic'] = chatgpt.request.to_chatgpt(data[idx])
+                log.write(f'instruction[{idx}]: {data[idx]["instruction"]}\n')
+                log.write(f'output[{idx}]: {new_data[-1]["topic"]}\n\n')
                 break
-        except:
-            pass
-        error_count += 1
-        time.sleep(0.5)
-        log.write(f'ERROR in {start_index}: {error}\n')
-        if error_count >= error_limit:
-            log.write(f'ERROR count exceed {error_limit}: {start_index}\n')
-            log.close()
-            exit()
-print('finished.')
-log.close()
-
-
-with open('result.p', 'wb') as f:
-    pickle.dump(topics, f)
-print('pickle saved.')
-df = pd.DataFrame(topics)
-df.to_csv('result.csv',encoding='utf-8')
-print('csv saved.')
+            except Exception as error:
+                error_count += 1
+                time.sleep(SLEEP_TIME)
+                log.write(f'ERROR in {idx}: {error}\n')
+                if error_count == ERROR_LIMIT:
+                    log.write(f'ERROR count exceed {ERROR_LIMIT}: {idx}\n')
+                    log.close()
+                    exit()
+    print(f'successfully finished: [{start_index}:{end_index}]')
+    log.close()
+    
+    save_data(new_data)

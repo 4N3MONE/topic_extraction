@@ -1,4 +1,3 @@
-
 PATH = './private/key.properties'
 
 def get_key(query):
