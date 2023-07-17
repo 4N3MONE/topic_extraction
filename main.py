@@ -18,7 +18,7 @@ def load_data(path='./data/kullm.json'):
 data = load_data()
 ERROR_LIMIT = 5
 topics = []
-for idx in tqdm(range(0,50)):
+for idx in tqdm(range(0, 50)):
     error_count = 0
     while(True):
         try:

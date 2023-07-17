@@ -4,10 +4,9 @@ class ChatGPT:
     def __init__(self, key, prompt_path = "./prompt.txt"):
         self.prompt_path = prompt_path
         openai.api_key = key
+        self.prompt_text = open(self.prompt_path).read() + "\n"
 
     def encode_prompt(self, prompt_instruction):
-        """Encode multiple prompt instructions into a single string."""
-        prompt = open(self.prompt_path).read() + "\n"
         prompt += f"'Input': \"{prompt_instruction['instruction']}\"\nTopic:"
         return prompt
 
