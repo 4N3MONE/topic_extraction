@@ -4,10 +4,6 @@ from transformers import AutoModel, AutoTokenizer
 from tqdm import tqdm
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-sns.set(style='white', context='notebook', rc={'figure.figsize':(5,5)})
-
 
 # 임베딩값 얻기
 def get_embeddings(text):
